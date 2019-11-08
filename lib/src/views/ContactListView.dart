@@ -1,4 +1,5 @@
 import 'package:app_6_contacts/src/models/Contact.dart';
+import 'package:app_6_contacts/src/models/ContactDAO.dart';
 import 'package:flutter/material.dart';
 
 class ContactListView extends StatefulWidget {
@@ -39,13 +40,4 @@ class _ContactListViewState extends State<ContactListView> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    var contact = Contact.fromMap({
-      Contact.NAME_COLUMN: "Ricardo"
-    });
-
-    print(contact);
-  }
 }

@@ -9,6 +9,7 @@ class Contact {
   static const String EMAIL_COLUMN = "email";
   static const String PHONE_COLUMN = "phone";
   static const String IMAGE_COLUMN = "image";
+  static const List<String> ALL_COLUMNS = [ID_COLUMN, NAME_COLUMN, EMAIL_COLUMN, PHONE_COLUMN, IMAGE_COLUMN];
 
   int id;
 
@@ -18,7 +19,7 @@ class Contact {
 
   String image;
 
-  Contact(this.id, this.name, this.email, this.phone, {this.image});
+  Contact(this.name, this.email, this.phone, {this.image});
 
   Contact.fromMap(Map map){
     this.id    = map[ID_COLUMN];
