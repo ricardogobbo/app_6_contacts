@@ -38,15 +38,28 @@ class ContactDAO {
     });
   }
 
-  /// Method : save (async)
-  ///
-  /// Params : [contact] = contact to be saved
-  /// Returns: same contact with created id
   Future<Contact> save(Contact contact) async {
+    return contact.id != null ? this.update(contact) : this.create(contact);
+  }
+
+  /// Method : create (async)
+  ///
+  /// Params : [contact] = contact to be created
+  /// Returns: same contact with created id
+  Future<Contact> create(Contact contact) async {
     Database db = await database;
     contact.id = await db.insert(Contact.TABLE_NAME, contact.toMap());
     return contact;
   }
+
+  Future<Contact> update(Contact contact) async {
+    Database db = await database;
+    await db.update(Contact.TABLE_NAME, contact.toMap(),
+        where: "${Contact.ID_COLUMN} = ? ", whereArgs: [contact.id]);
+
+    return contact;
+  }
+
 
   Future<Contact> get(int id) async {
     Database db = await database;
@@ -68,18 +81,14 @@ class ContactDAO {
         where: "${Contact.ID_COLUMN} = ?", whereArgs: [id]);
   }
 
-  Future<Contact> update(Contact contact) async {
-    Database db = await database;
-    await db.update(Contact.TABLE_NAME, contact.toMap(),
-        where: "${Contact.ID_COLUMN} = ? ", whereArgs: [contact.id]);
 
-    return contact;
-  }
 
-  Future<List<Contact>> list() async {
+  Future<List<Contact>> list({order: 'ASC', sort: Contact.ID_COLUMN}) async {
     Database db = await database;
     List<Map> results =
-        await db.query(Contact.TABLE_NAME, columns: Contact.ALL_COLUMNS);
+        await db.query(Contact.TABLE_NAME,
+            columns: Contact.ALL_COLUMNS,
+            orderBy: "upper($sort) $order");
 
     List<Contact> list = List();
     for(Map m in results){

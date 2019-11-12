@@ -11,14 +11,18 @@ class ContactListView extends StatefulWidget {
 class _ContactListViewState extends State<ContactListView> {
 
   final ContactDAO dao = ContactDAO();
-
+  bool _orderAsc = true;
   List<Contact> contacts = List();
 
 
   @override
   void initState() {
     super.initState();
-    dao.list().then((list){
+    _initContacts();
+  }
+
+  void _initContacts(){
+    dao.list(sort: Contact.NAME_COLUMN, order: _orderAsc ? 'ASC' : 'DESC').then((list){
       setState(() {
         contacts = list;
       });
@@ -32,22 +36,44 @@ class _ContactListViewState extends State<ContactListView> {
         title: Text("My Contacts"),
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
+          PopupMenuButton(
             icon: Icon(Icons.more_vert),
-            color: Colors.white,
-            onPressed: (){})
+
+            onSelected: (value){
+              if(value == true){
+                _orderAsc = true;
+              }else{
+                _orderAsc = false;
+              }
+              _initContacts();
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Text("Ordenar A - Z"),
+                value: true,
+              ),
+              PopupMenuItem(
+                child: Text("Ordenar Z - A"),
+                value: false,
+              )
+            ],
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => showContactEditView(context, null),
+        onPressed: () async{
+            final contact = await showContactEditView(context, null);
+            if(contact != null)
+              _initContacts();
+          },
         backgroundColor: Colors.blue,
       ),
       body: ListView.builder(
           padding: EdgeInsets.all(10),
           itemCount: contacts.length,
           itemBuilder: (context, index){
-            return ContactCard(contacts[index]);
+            return ContactCard(contacts[index], _initContacts);
           }
       ),
     );

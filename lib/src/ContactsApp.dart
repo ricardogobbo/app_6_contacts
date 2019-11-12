@@ -7,7 +7,8 @@ class ContactsApp {
 
   Widget build(){
     return MaterialApp(
-      home: ContactListView()
+      home: ContactListView(),
+      debugShowCheckedModeBanner: false,
     );
   }
 
